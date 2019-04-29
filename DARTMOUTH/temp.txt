@@ -1,0 +1,51 @@
+ -----------------------------------------------------
+     Isochrone [Fe/H] Interpolation Program
+ -----------------------------------------------------
+  Enter choice of color-Teff transformation: [1-14]
+      [1] UBVRI+2MASS+Kepler: Synthetic (Vega)    
+      [2] Washingon+DDO51   : Synthetic (Vega)    
+      [3] HST/WFCP2         : Synthetic (Vega)    
+      [4] HST/ACS-WFC       : Synthetic (Vega)    
+      [5] HST/ACS-HRC       : Synthetic (Vega)    
+      [6] HST/WFC3-UVIS+IR  : Synthetic (Vega)    
+      [7] Spitzer IRAC      : Synthetic (Vega)    
+      [8] UKIDSS            : Synthetic (Vega)    
+      [9] WISE              : Synthetic (Vega)    
+     [10] CFHT/MegaCam      : Synthetic (AB)      
+     [11] SDSS/ugriz        : Synthetic (AB)      
+     [12] PanSTARRS         : Synthetic (AB)      
+     [13] SkyMapper         : Synthetic (AB)      
+     [14] BV(RI)c+uvby      : VandenBerg+Clem et al.
+ -----------------------------------------------
+  Enter choice of Y: [1-3]
+  Y=  [1] 0.245 + 1.5 Z
+      [2] 0.33           ([Fe/H]<=0 only)
+      [3] 0.40           ([Fe/H]<=0 only)
+ -----------------------------------------------
+  Enter choice of [a/Fe]: [1-6]
+  [a/Fe]=  [1] -0.2
+           [2]  0.0
+           [3] +0.2
+           [4] +0.4   ([Fe/H]<=0 only)
+           [5] +0.6   ([Fe/H]<=0 only)
+           [6] +0.8   ([Fe/H]<=0 only)
+ -----------------------------------------------
+  Available [Fe/H] range is   -2.5000000000000000      ->  0.50000000000000000     
+  Enter new [Fe/H] to interpolate:
+ -----------------------------------------------
+  Enter new filename:
+ -----------------------------------------------
+ READ IN [Fe/H]= -0.50000000000000000     
+ READ IN [Fe/H]=   7.0000000000000007E-002
+ READ IN [Fe/H]=  0.35999999999999999     
+ READ IN [Fe/H]=  0.56000000000000005     
+ ***WARNING - POOR X,Z INTERPOLATION***
+ [Fe/H](Input) - [Fe/H](Interp)=   3.5199496421946946E-003
+ -------------------------------------------
+      Isochrone Age Separation Program
+ -------------------------------------------
+   Enter filename:
+ -------------------------------------------
+ -------------------------------------------
+   Results output to a***isotemp                  
+ -------------------------------------------
