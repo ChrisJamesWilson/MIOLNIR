@@ -11,13 +11,14 @@ import interp
 import numpy as np
 from astropy.io import ascii
 
-n_ms = 5
-n_rg = 3
-feh = 0.03
+n_ms = 30
+n_rg = 30
+Z = np.log10(0.03/0.012)
+feh = 0.281
 afe = 0.0
 age = 10
-lmin = 9000
-lmax = 24000
+lmin = 9.353139996530000644e+03
+lmax = 2.410741666080859795e+04
 imf = 'kroupa'
 dl = 0.1
 
@@ -30,10 +31,10 @@ t = ascii.read(parsfile)
 nstars = len(t)
 
 for i in range(nstars):
-	interp.interpolate(t[i][0],t[i][1],feh)
+	interp.interpolate(t[i][0],t[i][1],Z)
 
 
-SSP_model.ssp_model(lmin, lmax, feh = feh, afe = afe, age = age, imf = imf, fwhm = 2.5, n_ms = n_ms, n_rg = n_rg, dl = dl)
+SSP_model.ssp_model(Z, feh = feh, afe = afe, age = age, imf = imf, fwhm = 2.5, n_ms = n_ms, n_rg = n_rg, dl = dl)
 
 
 

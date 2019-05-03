@@ -39,8 +39,6 @@
  READ IN [Fe/H]=   7.0000000000000007E-002
  READ IN [Fe/H]=  0.35999999999999999     
  READ IN [Fe/H]=  0.56000000000000005     
- ***WARNING - POOR X,Z INTERPOLATION***
- [Fe/H](Input) - [Fe/H](Interp)=   3.5199496421946946E-003
  -------------------------------------------
       Isochrone Age Separation Program
  -------------------------------------------

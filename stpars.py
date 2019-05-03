@@ -182,7 +182,7 @@ def gettracks(feh, afe, age):
     
     scriptf = open("iso.sh","w+")
     scriptf.write("./iso_interp_feh << DONE\n")
-    scriptf.write("11\n")
+    scriptf.write("13\n")
     scriptf.write("1\n")
     scriptf.write(str(temp[0]) + "\n")
 #    scriptf.write('2\n')

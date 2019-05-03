@@ -70,7 +70,7 @@ print("   ssp.model(0.2, 0.2, 8, 'Unimodal', slope = 2.3, n_ms = 9, n_rg = 6)")
 ####################################################################
 # FUNCTION SSP.MODEL
 ####################################################################
-def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = None,
+def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
              fwhm = 0.2, dl = 0.1, CFe = 0.0, CFe_rgb = None, NFe = 0.0, 
              NFe_rgb = None, OFe = None, MgFe = None, SiFe = None, CaFe = None,
              TiFe = None, NaFe = 0.0, AlFe = 0.0, BaFe = 0.0, EuFe = 0.0,
@@ -121,7 +121,7 @@ def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = 
     #---------------------------------
     # OUTPUT FILE NAMES
     #---------------------------------
-    exists = os.path.isfile('./SSP_Spectra')
+    exists = os.path.isfile('SSP_Spectra/')
     if exists is False:
         os.system('mkdir SSP_Spectra')
         
@@ -166,12 +166,12 @@ def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = 
     #---------------------------------
     # CONSTANTS
     #---------------------------------
-    Lsun = 3.839e33  # erg s-e
+    Lsun = 3.839e26  # joules s-1 aka watts
     
     G = 6.67300e-11  # m3 kg-1 s-2
     Msun = 1.9891e33 # g
     sb = 5.67e-5     # erg cm-2 s-1 K-4
-    Rsun = np.sqrt(Lsun / (4 * np.pi * sb * 5777**4)) # = 6.955e10 cm
+    Rsun = np.sqrt(Lsun / (4 * np.pi * sb * 5777**4))*(10**(-2)) # = 6.955e10 cm
     aSun = 4 * np.pi * Rsun**2 # cm2
     
     #---------------------------------
@@ -195,7 +195,8 @@ def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = 
         phase[i] = t[i][4]
     
     radii = np.sqrt(lumis * Lsun / (4 * np.pi * sb * Teffs**4)) # cm
-    area = 4 * np.pi * radii**2 # cm2
+    radii = radii*(10**(-2)) # m
+    area = 4 * np.pi * radii**2 # m2
     
     
     log.write('\nReading stellar parameters from:  ' + parsfile + '\n')
@@ -208,7 +209,7 @@ def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = 
     logL_breaks = np.zeros(len(logL))
     nn = len(lumis)
     
-    lum_breaks = np.zeros(len(lumis)+1)
+    lum_breaks = np.zeros(nn+1)
     
     for i in range(nn+1):
         if i == 0:
@@ -217,6 +218,7 @@ def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = 
             lum_breaks[i] = np.mean([lumis[i-1],lumis[i]])
         if i == nn:
             lum_breaks[i] = lumis[nn-1]
+
     
     isofile = stpars.gettracks(feh, afe, age)
     t = ascii.read(isofile)
@@ -269,9 +271,9 @@ def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = 
         #                               loggs[i], CFe, NFe, OFe, MgFe, SiFe,
         #                                CaFe, TiFe, NaFe, AlFe, BaFe, EuFe)
     
-	file_flux = ret.set_spectra_name(Teffs[i], loggs[i], feh)
+	file_flux = ret.set_spectra_name(Teffs[i], loggs[i], Z)
 	
-
+	print('Implementing file: ' + file_flux)
         #---------------------------------
         # CONVOLUTION STELLAR SPECTRA
         #---------------------------------
@@ -292,9 +294,10 @@ def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = 
         #---------------------------------
         tt = np.loadtxt('st_spectra')
         lamda = tt[:,0]
-        units = 1e-8 * 4 * np.pi  # erg / (s cm2 cm ster) --> erg / (s cm2 A)
+	units = 1
+        #units = 1e-8 * 4 * np.pi  # erg / (s cm2 cm ster) --> erg / (s cm2 A)
         # Scale flux according to the star surface area and normalize by Lsun
-        st_flux = tt[:,1] * units * area[i] / Lsun # erg / (s cm2 A) --> Lsun / A
+        st_flux = tt[:,1]# * units * area[i] / Lsun # erg / (s cm2 A) --> Lsun / A
         
         if i == 0:
             ssp_flux = np.zeros(len(st_flux))
@@ -414,10 +417,10 @@ def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = 
     for i in range(len(data)):
         log.write(data[i] + '\n')
     
-
-#    data = '%7.2f%13.5e' % (lamda[i], ssp_flux[i])
-#    log.write(data + '\n')
     datum = open(file_ssp, 'w+')
+    data = '%7.2f%13.5e' % (lamda[i], ssp_flux[i])
+    datum.write(data + '\n')
+
     for i in range(1,len(lamda)):
         data = '%7.2f%13.5e' % (lamda[i],ssp_flux[i])
         datum.write(data + '\n')
@@ -449,19 +452,25 @@ def ssp_model(lmin,lmax,feh = None, afe = None, age = None, imf = None, slope = 
     t_2 = np.loadtxt('./DATA/MarS/MARv_SAL_sed_NOCS_H_Z_0.029999999_Tg_1.0000000e+10')
     t_3 = np.loadtxt('./DATA/GirS/GIRv_SAL_sed_NOCS_H_Z_0.029999999_Tg_1.0000000e+10')
     t_4 = np.loadtxt('./DATA/BaSS/BASv_SAL_sed_NOCS_H_Z_0.029999999_Tg_1.0000000e+10')
+    t_2[:,0] = t_2[:,0] *10000
+    t_3[:,0] = t_3[:,0] *10000
+    t_4[:,0] = t_4[:,0] *10000
 
     ax = plt.subplot(111)
     
 
     inter=interp1d(t_2[:,0],t_2[:,1])
-    ax.plot(t_2[:,0]*10000,t_2[:,1]/inter(12230/10000),'r', linewidth = 0.25, label = 'MarS Model')
+    t_2norm = inter(12230)
+    ax.plot(t_2[:,0],t_2[:,1]/inter(12230),'r', linewidth = 0.25, label = 'MarS Model')
     inter=interp1d(t_3[:,0],t_3[:,1])
-    ax.plot(t_3[:,0]*10000,t_3[:,1]/inter(12230/10000),'g', linewidth = 0.25, label = 'GirS Model')
+    ax.plot(t_3[:,0],t_3[:,1]/inter(12230),'g', linewidth = 0.25, label = 'GirS Model')
     inter=interp1d(t_4[:,0],t_4[:,1])
-    ax.plot(t_4[:,0]*10000,t_4[:,1]/inter(12230/10000),'m', linewidth = 0.25, label = 'BaSS Model')
+    ax.plot(t_4[:,0],t_4[:,1]/inter(12230),'m', linewidth = 0.25, label = 'BaSS Model')
     inter=interp1d(t[:,0],t[:,1])
-    ax.plot(t[:,0],t[:,1]/inter(12230),'b', linewidth = 0.25, label = 'Interpolated SSP')
+    tnorm = inter(12230)
+    ax.plot(t[:,0],t[:,1]/inter(12230),'b', linewidth = 0.25, label = 'Our Model')
     ax.legend()
+    print()
 
     plt.show(block=True)
 

@@ -1,8 +1,8 @@
 ./iso_interp_feh << DONE
-11
+13
 1
 2
-0.03
+0.281
 isotemp
 DONE
 #
