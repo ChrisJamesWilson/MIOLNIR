@@ -10,7 +10,7 @@ test.py sets inital values for all the variables. It then runs the following pro
 
 The contained codes and their functions:
 
-# stpars.py
+### stpars.py
 
 stpars.py contains 3 different functions: stpars(), gettracks() and set_stpars_filename().
 
@@ -38,7 +38,7 @@ gettracks uses the previously defined parameters to find the correct isochrone. 
 This outputs the filename and path for the parameter file given the previously defined inputs.
 
 
-# interp.py
+### interp.py
 
 interp.py contains two functions: interpall() and interpolate()
 
