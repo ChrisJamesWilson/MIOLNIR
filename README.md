@@ -74,3 +74,7 @@ This function retrieves an irtf .fits file for a specific ID into a usable forma
 **set_spectra_name(Teff, logg, Z)**
 
 This function takes the previously defined paramaters and outputs a filename for the interpolated spectra in _interp.py_
+
+## SSP_model.py
+
+SSP_model is an apdated version of https://github.com/marinatrevisan/SynSSP_PFANTnew.
