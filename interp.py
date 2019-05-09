@@ -5,11 +5,23 @@ import scipy.interpolate as interp
 import os
 from astropy.io import fits
 import retrieve_irtf as ret
+import stpars
+from astropy.io import ascii
 #from mpl_toolkits.mplot3d import Axes3D
 
 
 
 # t is a table of the stars in the irtf library. The coloumns are: ID,   Teff(K),   logg,   Z/Zsun
+
+def interpall(n_ms, n_rg, feh, afe, age, Z):
+	parsfile = stpars.set_stpars_filename(n_ms, n_rg, feh, afe, age)
+
+	t = ascii.read(parsfile)
+
+	nstars = len(t)
+
+	for i in range(nstars):
+		interpolate(t[i][0],t[i][1],Z)
 
 def interpolate(Teff_new, logg_new, Z_new):
 
@@ -87,7 +99,7 @@ def interpolate(Teff_new, logg_new, Z_new):
 		Diff[:,2] = Diff[:,2]**Zn
 
 		# nth power
-		compare = np.array([Diff[:,0]/max(Diff[:,0]), Diff[:,1]/max(Diff[:,1]), Diff[:,2]/max(Diff[:,2])])
+		compare = np.array([Diff[:,0]/(max(Diff[:,0])-min(Diff[:,0])), Diff[:,1]/(max(Diff[:,1])-min(Diff[:,1])), Diff[:,2]/(max(Diff[:,2])-min(Diff[:,2]))])
 		# Normalises values based on the parameters respective ranges
 
 		#mean = np.sum(compare, axis=1)/3
@@ -97,7 +109,7 @@ def interpolate(Teff_new, logg_new, Z_new):
 		# Finds the relative normalised differences of any empirical star to the defined point
 		diff_sort = np.sort(dist)
 
-		radii = 0.05
+		radii = 0.1
 
 		if diff_sort[0] == 0:
 			stars = np.where(dist == 0)[0]

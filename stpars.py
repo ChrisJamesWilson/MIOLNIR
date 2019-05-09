@@ -49,7 +49,7 @@ print('   stpars(9, 6, 0.2, 0.2, 8)')
 # FUNCTION STPARS
 ####################################################################
 
-def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False):
+def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False, iso = 'DARTMOUTH'):
     
     #---------------------------------
     # SET OUTPUT FILENAME
@@ -59,23 +59,38 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False):
     #---------------------------------
     # ISOCHRONE [FE/H]-INTERPOLATION
     #---------------------------------
-    isofile = gettracks(feh, afe, age)
+    isofile = gettracks(feh, afe, age, iso = iso)
+
+    if iso.upper() == 'DARTMOUTH':
+	print('Utilizing the DARTMOUTH isochrones')
+    if iso.upper() == 'PADOVA':
+	print('Utilizing the Padova isochrones')
     
     #---------------------------------
     # READ ISOCHRONE
     #---------------------------------
     t = np.loadtxt(isofile)
-    isoteff = 10**t[:,2]
-    isologg = t[:,3]
-    isomass = t[:,1]
-    isologL = t[:,4]
+    F0 = 1.021e-20 #Vega flux in erg cm-2 s-1 Hz-1
+    pc = 3.086e18 # parsec in cm
+    if iso.upper() == 'DARTMOUTH':
+	isoteff = 10**t[:,2]
+        isologg = t[:,3]
+        isomass = t[:,1]
+        isologL = t[:,4]
+    if iso.upper() == 'PADOVA':
+        isoteff = 10**t[:,6]
+        isologg = t[:,7]
+        isomass = t[:,2]
+        isologL = t[:,5]
+	isoHFlux = 10**(-t[:,30]/2.5)*F0
+        isologLH = np.log10(isoHFlux*4*np.pi*10*pc)
     
     #---------------------------------
     # GET STELLAR PARAMETERS
     #---------------------------------
-    logg_lim = max(isologg[np.where(isoteff == max(isoteff))])
-    min_teff_ms = min(isoteff[np.where(isologg>=logg_lim)])
-    min_teff_rg = min(isoteff[np.where(isologg<logg_lim)])
+    logg_lim = max(isologg[isoteff == max(isoteff)])
+    min_teff_ms = min(isoteff[isologg>=logg_lim])
+    min_teff_rg = min(isoteff[isologg<logg_lim])
     
     delta_teff_ms = (max(isoteff) - min_teff_ms) / n_ms
     delta_teff_rg = (max(isoteff) - min_teff_rg) / n_rg
@@ -84,7 +99,7 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False):
     phase = list(itertools.repeat("ms", n_ms + n_rg + 1))
     
     for i in range(n_ms):
-        teff_grid[i] = min_teff_ms + i* delta_teff_ms
+        teff_grid[i] = min_teff_ms + i * delta_teff_ms
 
     teff_grid[n_ms] = max(isoteff)
     j = 0
@@ -93,7 +108,7 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False):
         phase[i] = "rgb"
         j += 1
         
-    index_lim = np.where(teff_grid == max(isoteff))[0]
+    index_lim = np.where(teff_grid == max(isoteff))[0][0]
     logg_grid = np.zeros(len(teff_grid))
     mass_grid = np.zeros(len(teff_grid))
     lumi_grid = np.zeros(len(teff_grid))
@@ -101,9 +116,9 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False):
     for i in range(len(teff_grid)):
         
         if i <= index_lim:
-            xxxx = np.where(isologg >= logg_lim)[0]
+            xxxx = isologg >= logg_lim
         else:
-            xxxx = np.where(isologg < logg_lim)[0]
+            xxxx = isologg < logg_lim
             
             
         temp = abs(isoteff[xxxx] - teff_grid[i])
@@ -114,7 +129,7 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False):
         logg_grid[i] = logg_grid_temp[condition][0]
         mass_grid_temp = isomass[xxxx]
         mass_grid[i] = mass_grid_temp[condition][0]
-        lumi_grid_temp = isologL[xxxx]
+        lumi_grid_temp = isologLH[xxxx]
         lumi_grid[i] = lumi_grid_temp[condition][0]
 #        
 #        logg_grid[i] = isologg[(xxxx) and np.where(temp == min(temp))][0]
@@ -125,17 +140,17 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False):
         if logg_grid[i] <= logg_cn:
             phase[i] = "rgb_cn"
     
-    isoteffgrid = np.round(teff_grid)
-    isologggrid = np.round(logg_grid,2)
-    isomassgrid = np.round(mass_grid,7)
-    isologLgrid = np.round(lumi_grid,4)
+    isoteffgrid = teff_grid
+    isologggrid = logg_grid
+    isomassgrid = mass_grid
+    isologLgrid = lumi_grid
     
     #---------------------------------
     # WRITE OUTPUT FILE
     #---------------------------------
     exists = os.path.isfile('./Stellar_pars')
 
-    if exists == False:
+    if exists is False:
         os.system("mkdir Stellar_pars")
     
     ascii.write([isoteffgrid,isologggrid,isomassgrid,isologLgrid,phase],
@@ -175,7 +190,7 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False):
 ##################################
 # FUNCTION GET.TRACKS
 ##################################
-def gettracks(feh, afe, age):
+def gettracks(feh, afe, age, iso = 'DARTMOUTH'):
     afes = np.array([[-0.2],[0.0],[0.2],[0.4],[0.6],[0.8]])
     afesr = abs(afes-afe)
     temp = np.where(afesr==min(afesr))[0] + 1
@@ -202,11 +217,17 @@ def gettracks(feh, afe, age):
     os.chdir("./DARTMOUTH/")
     os.system("./iso.sh > temp.txt")
     os.chdir("../")
+    if iso.upper() == 'DARTMOUTH':
+	if age < 10:
+	    isofileout = "./DARTMOUTH/a0" + str(int(age)*1000) + "isotemp"
+        else:
+	    isofileout = "./DARTMOUTH/a" + str(int(age)*1000) + "isotemp"
     
-    if age < 10:
-        isofileout = "./DARTMOUTH/a0" + str(int(age*1000)) + "isotemp"
-    else:
-        isofileout = "./DARTMOUTH/a" + str(int(age*1000)) + "isotemp"
+    if iso.upper() == 'PADOVA':
+        if age < 10:
+	    isofileout = "./DARTMOUTH/isochrones/Padova/iso0" + str(int(age)) + ".dat"
+        else:
+	    isofileout = "./DARTMOUTH/isochrones/Padova/iso" + str(int(age)) + ".dat"
         
     return(isofileout)
 
