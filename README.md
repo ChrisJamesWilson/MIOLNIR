@@ -7,6 +7,7 @@ test.py sets inital values for all the variables. It then runs the following pro
   - interpall - This creates interpolated spectra for all the stars contained in the stpars output file
   - SSP_model - This combines all the spectra together to create an SSP.
 
+:shipit:
 
 The contained codes and their functions:
 
