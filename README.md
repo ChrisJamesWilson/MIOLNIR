@@ -54,4 +54,23 @@ This is the main interpolator. Given the above parameters it will interpolate a 
 
 interpall's inputs have already been defined.
 
-interpall uses interpolate() to calculate spectra for all stars that are in the paramater file created in **stpars.py**.
+interpall uses interpolate() to calculate spectra for all stars that are in the paramater file created in _stpars.py_.
+
+### retrieve_irtf.py
+
+retrieve_irtf.py contains several functions: param_retrieve(), get_spectra() and set_spectra_name()
+
+**param_retrieve()**
+
+param_retrieve() requires no inputs and simply converts the _irtf_param.txt_ file to a more usable format.
+
+**get_spectra(ID)**
+
+  - get_spectra requires only one input
+    - ID = the ID of the irtf file you require (ie 'IRL012')
+
+This function retrieves an irtf .fits file for a specific ID into a usable format and returns it.
+
+**set_spectra_name(Teff, logg, Z)**
+
+This function takes the previously defined paramaters and outputs a filename for the interpolated spectra in _interp.py_
