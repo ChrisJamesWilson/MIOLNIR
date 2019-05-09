@@ -9,13 +9,18 @@ test.py sets inital values for all the variables. It then runs the following pro
 
 
 The contained codes and their functions:
-stpars.py
+
+**stpars.py**
   - stpars uses the following required inputs:
     - n_ms = number of main sequence stars
     - n_rg = number of red giant stars
     - feh = iron abundance [Fe/H]
     - afe = [alpha/Fe]
     - age = age of the population (in Gyrs)
-  - stpars uses the folowing additional inputs:
-    - 
+    
+  - stpars uses the following additional inputs:
+    - logg_cn = stars with logg <= logg_cn
+    - fig = logical, whether you want the isochrone plotted or not
+    - iso = isochrone model used, currently supports DARTMOUTH or PADOVA
+stpars.py
       
