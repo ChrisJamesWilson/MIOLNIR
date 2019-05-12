@@ -83,7 +83,7 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False, iso = 'DARTMOUTH
         isomass = t[:,2]
         isologL = t[:,5]
 	isoHFlux = 10**(-t[:,30]/2.5)*F0
-        isologLH = np.log10(isoHFlux*4*np.pi*10*pc)
+        isologLH = np.log10(isoHFlux*4*np.pi*(10*pc)**2)
     
     #---------------------------------
     # GET STELLAR PARAMETERS
