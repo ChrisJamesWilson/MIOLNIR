@@ -236,7 +236,7 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
         isomass = t[:,2]
         isologL = t[:,5]
 	isoHFlux = 10**(-t[:,30]/2.5)*F0
-        isologLH = np.log10(isoHFlux*4*np.pi*10*pc)
+        isologLH = np.log10(isoHFlux*4*np.pi*(10*pc)**2)
     print(iso)
 
     isoL = 10**isologLH
