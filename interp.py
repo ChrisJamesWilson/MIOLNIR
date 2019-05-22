@@ -116,10 +116,6 @@ def interpolate(Teff_new, logg_new, Z_new):
 		else:
 			stars = np.where(dist < radii)[0]
 
-		###############################################################################################
-		#### Improved angular code to be placed here, replacing the below "if len(stars)" segments ####
-		###############################################################################################
-		
 		if len(stars) > 3:
 			print(str(radii))
 			radii = diff_sort[2] + 0.001
@@ -298,109 +294,8 @@ def interpolate(Teff_new, logg_new, Z_new):
 
 		print('Spectra located at: ' + file_spectra)
 
-#####################
-## Appendixed code ##
-#####################
 
-#		radii = 1
-#        sample = 3
-#
-#		if diff_sort[0] == 0:
-#			stars = np.where(dist == 0)[0]
-#		else:
-#			stars = np.where(dist < radii)[0]
-#            
-#		if len(stars) == 0 and radii < 0.7:
-#			print('No stars within the selected radius: ' + str(radii))
-#			radii = diff_sort[0] + 0.001
-#			if diff_sort[0] == 0:
-#				stars = np.where(dist == 0)[0]
-#			else:
-#				stars = np.where(dist < radii)[0]
-#  
-#		angsep = np.pi/2
-#
-#        	nstars = 5
-#        	ang_diff = np.ones((nstars,nstars,2))
-#		  # Set up so that rather than repeat a star consideration, if the code 
-#		  # is looking at star combinations that have already been considered they will be ignored
-#		  # as the multiplied of 10 ensures the angle is way too large to be accepted.
-#		    ## This *10 functionality has been changed
-#		  # Also maintains the index of stars across the data cube
-#		repeat = 1
-#		while repeat = 1 & nstars > 1:
-#		        
-#			for i in range(nstars):
-#				theta_big = np.tile(thetasort[i],(range(nstars), 1))
-#				phi_big = np.tile(phisort[i],(range(nstars), 1))
-#				ang_diff[i,:,0] = theta_big - thetasort[:nstars]
-#				ang_diff[i,:,1] = phi_big - phisort[:nstars]
-#				# Creates a datacube of angular differences for all combinations of stars in the set
-#				# Each layer is a 2xN of thetas and phi differences, with consecutive layers being the 
-#				# next sequential star being compared with all others
-#				#        size = len(ang_diff[0,0,:])
-#
-#			for i in range(len(ang_diff[0, :, 0])):
-#			# for j in range(len(ang_diff[0,0,:])):
-#				ang_diff[:, i, 0] = np.roll(ang_diff[:, i, 0], i)
-#				ang_diff[:, i, 1] = np.roll(ang_diff[:, i, 1], i)
-#			# Rotates cube such that each layer is now the differences of sequencial stars, rather than diagonal
-#
-#			ang_diff = ang_diff[1:, :, :]
-#			# Slices out the first face, which after rotating should be a face of
-#			# zeros (angular difference between a star vs itself)
-#			ang_diff = ang_diff[:(math.trunc(len(ang_diff[:,0,0])/2)), :, :]
-#			# Takes the first half (rounded down to nearest integer if initially odd)
-#			# to ignore repeated calculations
-#			temp = ang_diff
-#			#            iterations = (len((ang_diff[:,0,0]))**2)*len(ang_diff[0,:,0])
-#
-#			#            sums = np.ones(len(ang_diff[:, 0, 0]), len(ang_diff[0, :, 0]), 2))
-#			min_comb = 100
-#			for k in range(len(ang_diff[:, 0, 0])): # x in this plane
-#				for j in range(len(ang_diff[0, :, 0])): # y in this plane
-#					sums = abs(np.sum(np.sum(temp, axis = 1), axis = 1))
-#					# Truncates dimensions to use a sum of both phi and theta
-#					sums = abs(4*pi - sums)
-#					if min(sums) < min_comb:
-#						min_comb = min(sums)
-#            					  # Calculates the minimum
-##						index = (np.where(sums == min_comb))[0]
-#            			if abs(4*pi - min_comb)/(4*pi) < 0.2  :
-#            				repeat = 0
-##            				chosen = temp[index,:,:]
-##            				jj = j
-##            				kk = k
-#
-#            				print('Optimal combination found') #, angles sum to ' + str(4*pi-min_comb))
-#                
-#            			else :
-#                                temp = ang_diff
-#                                temp[:, j+1, 0] = np.roll(temp[:, j+1, 0], k+1)
-#                                temp[:, j+1, 1] = np.roll(tmep[:, j+1, 1], k+1)
-#                                # Rotates each section by amount k
-#                                # Can be done prior to j loop, but need to be careful and 
-#                                # change where minimum is calculated
-#                                nstars = nstars - 1
-#                                print('No suitable combination found, reduce number of stars to ' + str(nstars))
-#                                
-#           # So here's the deal. As it stands, this code is a very long-winded way of saying 
-#           # "If N stars does not work, try N-2, then N-2, etc.. Except it is missing the key
-#           # feature. Right now, it looks at a set of N closest stars, which does not allow for optimisation.
-#           # Instead, we would like for it to try N stars out of a larger set. If this is not optimal,
-#           # test out N-1 stars from this same set, and so on, until an optimal combination is found.
-#           # In essence, if we have 10 stars this code, right now, looks at all closest 10, if it is not optimal,
-#           # it then looks at the closest 9, repeats. 
-#           # What we would like it to do is look at all 10 and if it is not optimal look at every combination
-#           # of 9 out of those 10, then 8 out of 10, then 7, etc.
-#           # While this is possible, the methods we can conjure in the little time we have are god-awful,
-#           # with an extremely high computational complexity that simply is not worthwhile.
-#           # The possible functionality remains, but must be extended. Future users may wish to try
-#           # continuing this to find the optimal set, but it is highly recommended that you first 
-#           # vectorise the functions. The greatest difficulty is working out what set you have used without
-#           # trying to save all of the information to written files or memory. We started implementing 
-#           # a method to find the index of the final value and work backwards (allowing us to not save information),
-#           # before realising we were missing looking at ALL combinations.
+
 
 
 

@@ -21,7 +21,7 @@ lmin = 9.353139996530000644e+03
 lmax = 2.410741666080859795e+04
 imf = 'kroupa'
 dl = 0.1
-iso = 'Padova'
+iso = 'padova' # options are padova or dartmouth
 
 
 stpars.stpars(n_ms, n_rg, feh, afe, age, fig = True, iso = iso)

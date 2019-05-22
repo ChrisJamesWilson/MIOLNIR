@@ -168,7 +168,7 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
     #---------------------------------
     # CONSTANTS
     #---------------------------------
-    Lsun = 3.839e33  # joules s-1 aka watts
+    Lsun = 3.839e33  # erg s-1
     pc = 3.086e18 # parsec in cm
     G = 6.67300e-11  # m3 kg-1 s-2
     Msun = 1.9891e33 # g
@@ -223,10 +223,10 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
 
     
     isofile = stpars.gettracks(feh, afe, age, iso = iso)
-    F0 = 1.021e-20 #Vega flux in erg cm-2 s-1 Hz-1
+    F0 = 1.021e-20# 1.1596e-10 #Vega flux of Hband in erg cm-2 s-1 Hz-1
     t = np.loadtxt(isofile)
     if iso.upper() == 'DARTMOUTH':
-	isoteff = 10**t[:,2]
+        isoteff = 10**t[:,2]
         isologg = t[:,3]
         isomass = t[:,1]
         isologL = t[:,4]
@@ -235,7 +235,7 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
         isologg = t[:,7]
         isomass = t[:,2]
         isologL = t[:,5]
-	isoHFlux = 10**(-t[:,30]/2.5)*F0
+        isoHFlux = 10**(-t[:,30]/2.5)*F0
         isologLH = np.log10(isoHFlux*4*np.pi*(10*pc)**2)
     print(iso)
 
@@ -282,15 +282,15 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
         #                               loggs[i], CFe, NFe, OFe, MgFe, SiFe,
         #                                CaFe, TiFe, NaFe, AlFe, BaFe, EuFe)
     
-	file_flux = ret.set_spectra_name(Teffs[i], loggs[i], Z)
-	print('-------------------------------------------------------------------------------')
-	print('Implementing file: ' + file_flux)
-        #---------------------------------
-        # CONVOLUTION STELLAR SPECTRA
-        #---------------------------------
-	
-	os.system('cp ./Stellar_Spectra/' + file_flux + ' ./')
-	os.system('mv ./' + file_flux + ' st_spectra')
+        file_flux = ret.set_spectra_name(Teffs[i], loggs[i], Z)
+        print('-------------------------------------------------------------------------------')
+        print('Implementing file: ' + file_flux)
+            #---------------------------------
+            # CONVOLUTION STELLAR SPECTRA
+            #---------------------------------
+        
+        os.system('cp ./Stellar_Spectra/' + file_flux + ' ./')
+        os.system('mv ./' + file_flux + ' st_spectra')
 	
         #os.system('rm -f st_spectra')
         #print(file_flux)
@@ -306,10 +306,10 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
         tt = np.loadtxt('st_spectra')
         lamda = tt[:,0]
         hfilt = pyphot.get_library()['GROUND_BESSELL_H']
-	units = 1
+        units = 1
         #units = 1e-8 * 4 * np.pi  # erg / (s cm2 cm ster) --> erg / (s cm2 A)
         # Scale flux according to the star surface area and normalize by Lsun
-        st_flux = tt[:,1]#*hfilt.get_flux(tt[:,0],tt[:,1])# * area[i] / Lsun # erg / (s cm2 A) --> Lsun / A
+        st_flux = tt[:,1]*(lumis[i])#*hfilt.get_flux(tt[:,0],tt[:,1])# * area[i] / Lsun # erg / (s cm2 A) --> Lsun / A
         
         if i == 0:
             ssp_flux = np.zeros(len(st_flux))
@@ -394,12 +394,12 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
         fraction_L[i] = L_bin
         
     # normalization: sum(mass * phi_m * dm) = 1 Msun
-    L_SSP = np.sum(fraction_L) 
+    L_SSP = np.sum(fraction_L)
     fraction_L = fraction_L / L_SSP
     ssp_flux = ssp_flux / np.sum(fraction_M)
-    ssp_flux = ssp_flux  * 10**-7 * hfilt.get_flux(lamda,ssp_flux) # Hband unnormalisation and erg conversion
+    ssp_flux = ssp_flux# * hfilt.get_flux(lamda,ssp_flux) # Hband unnormalisation and erg conversion
     fraction_M = fraction_M / np.sum(fraction_M)
-    
+
     #---------------------------------
     # WRITE INFO IN LOGFILE
     #---------------------------------
@@ -457,7 +457,7 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
     #---------------------------------
     
     t = np.loadtxt(file_ssp)
-    t[:,1] = t[:,1]
+    t[:,1] = t[:,1]/hfilt.get_flux(t[:,0],t[:,1])#Lsun
     #t[:,1] = 3e-9*t[:,1]/(t[:,0]*10**-4)**2
 #    t1 = np.zeros(len(t))
 #    t2 = np.zeros(len(t))
@@ -468,79 +468,29 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
     
 #    plt.yscale('log')
     plt.xlabel(r'$\lambda (\AA)$')
-    plt.ylabel('Flux')
+    plt.ylabel(r'$F/F_{12230}$')
     #plt.savefig(file_fig)
 
     t_2 = np.loadtxt('./DATA/MarS/MARv_SAL_sed_NOCS_H_Z_0.029999999_Tg_1.0000000e+10')
     t_3 = np.loadtxt('./DATA/GirS/GIRv_SAL_sed_NOCS_H_Z_0.029999999_Tg_1.0000000e+10')
     t_4 = np.loadtxt('./DATA/BaSS/BASv_SAL_sed_NOCS_H_Z_0.029999999_Tg_1.0000000e+10')
-    t_2[:,0] = t_2[:,0] *10000
-    t_3[:,0] = t_3[:,0] *10000
-    t_4[:,0] = t_4[:,0] *10000
+    t_2[:,0] = t_2[:,0] * 10000
+    t_3[:,0] = t_3[:,0] * 10000
+    t_4[:,0] = t_4[:,0] * 10000
 
     ax = plt.subplot(111)
     
 
-    lwid= 0.3
-
     inter=interp1d(t_2[:,0],t_2[:,1])
     t_2norm = inter(12230)
-    #ax.plot(t_2[:,0],t_2[:,1]/inter(12230),'r', linewidth = lwid, label = 'MarS Model')
-    er1 = t_2[:,1]/inter(12230)
-
-    inter = interp1d(t_3[:,0],t_3[:,1])
-    #ax.plot(t_3[:,0],t_3[:,1]/inter(12230),'g', linewidth = lwid, label = 'GirS Model')
-    er2 = t_3[:,1]/inter(12230)
-
-    inter = interp1d(t_4[:,0],t_4[:,1])
-    #ax.plot(t_4[:,0],t_4[:,1]/inter(12230),'m', linewidth = lwid, label = 'BaSS Model')
-    er3 = t_4[:,1]/inter(12230)
-
-    inter = interp1d(t[:,0],t[:,1])
-    ax.plot(t[:,0],t[:,1]/inter(12230),'k', linewidth = lwid, label = 'Our Model')
-    
-    #avg = (er1 + er2 + er3)/3 
-    #  # Average of all other models 
-    #avg_er = abs(t[:,1]/inter(12230) - avg)
-    #  # Difference between our model and the average
-    #ax.fill_between(t[:,0], t[:,1]/inter(12230) + avg_er, t[:,1]/inter(12230) - avg_er,
-    #               facecolor = 'c', alpha = 0.5, label = 'Average comparative error (BaSS/GirS/MarS)')
-    #  # Filled-colour relative errors (assumes the same error in both vertical directions and no error in horizontal directions 
-
-
-    max_err = np.amax([np.subtract(er1, t[:,1]/inter(12230)), 
-                       np.subtract(er2, t[:,1]/inter(12230)), 
-                       np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
-    max_err[max_err < 0] = 0
-
-    min_err = np.amin([np.subtract(er1, t[:,1]/inter(12230)), 
-                       np.subtract(er2, t[:,1]/inter(12230)), 
-                       np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
-    min_err[min_err > 0] = 0
-      # Finding the upper difference limit for our data compared to other models (switch the < and > to the opposite opperator to find the lower difference limits).
-   
-    ax.fill_between(t[:,0], t[:,1]/inter(12230) + max_err, t[:,1]/inter(12230),
-                   facecolor = 'c', alpha = 0.35, label = 'Maximum difference (BaSS/GirS/MarS)')
-    ax.fill_between(t[:,0], t[:,1]/inter(12230), t[:,1]/inter(12230) + min_err,
-                   facecolor = 'c', alpha = 0.35)
-
-    max_err = np.amax([np.subtract(er1, t[:,1]/inter(12230)), 
-                       np.subtract(er2, t[:,1]/inter(12230)), 
-                       np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
-    max_err[max_err > 0] = 0
-
-    min_err = np.amin([np.subtract(er1, t[:,1]/inter(12230)), 
-                       np.subtract(er2, t[:,1]/inter(12230)), 
-                       np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
-    min_err[min_err < 0] = 0
-      # Finding the upper difference limit for our data compared to other models (switch the < and > to the opposite opperator to find the lower difference limits).
-   
-    ax.fill_between(t[:,0], t[:,1]/inter(12230) + max_err, t[:,1]/inter(12230),
-                   facecolor = 'r', alpha = 0.35, label = 'Minimum difference (BaSS/GirS/MarS)')
-    ax.fill_between(t[:,0], t[:,1]/inter(12230), t[:,1]/inter(12230) + min_err,
-                   facecolor = 'r', alpha = 0.35)
-
-
+    ax.plot(t_2[:,0],t_2[:,1]/inter(12230),'r', linewidth = 0.25, label = 'MarS Model')
+    inter=interp1d(t_3[:,0],t_3[:,1])
+    ax.plot(t_3[:,0],t_3[:,1]/inter(12230),'g', linewidth = 0.25, label = 'GirS Model')
+    inter=interp1d(t_4[:,0],t_4[:,1])
+    ax.plot(t_4[:,0],t_4[:,1]/inter(12230),'m', linewidth = 0.25, label = 'BaSS Model')
+    inter=interp1d(t[:,0],t[:,1])
+    tnorm = inter(12230)
+    ax.plot(t[:,0],t[:,1]/inter(12230),'b', linewidth = 0.25, label = 'Our Model')
     ax.legend()
     print()
 

@@ -175,7 +175,7 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False, iso = 'DARTMOUTH
     
     ascii.write([isoteffgrid,isologggrid,isomassgrid,isologLgrid,phase],
                 fileout, names = ['#Teff/k','logg',
-                'Mass/Msun','logL/Lsun','phase'], overwrite = True)
+                'Mass/Msun','logL','phase'], overwrite = True)
     
     #---------------------------------
     # PLOT ISOCHRONE
@@ -192,6 +192,8 @@ def stpars(n_ms, n_rg, feh, afe, age, logg_cn = 3, fig = False, iso = 'DARTMOUTH
         plt.legend((('Isochrone [Fe/H] = ' + str(feh) + ', [a/Fe] = ' + str(afe) + ', Age = ' + str(age) + ' Gyr'),('Selected Stellar Parameters')),loc = 'upper left',fontsize = 'small')
 
         plt.show()
+
+        plt.close()        
     
     #---------------------------------
     # PRINT SOME INFORMATION
