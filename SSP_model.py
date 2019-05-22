@@ -464,11 +464,11 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
 #    for i in range(len(t)):
 #        t1[i] = t[i][0]
 #        t2[i] = t[i][1]
-    plt.figure()
-    
+plt.figure()
+    font = 16
 #    plt.yscale('log')
-    plt.xlabel(r'$\lambda (\AA)$')
-    plt.ylabel(r'$F/F_{12230}$')
+    plt.xlabel(r'$\lambda (\AA)$', fontsize = font)
+    plt.ylabel(r'$F/F_{12230}$', fontsize = font)
     #plt.savefig(file_fig)
 
     t_2 = np.loadtxt('./DATA/MarS/MARv_SAL_sed_NOCS_H_Z_0.029999999_Tg_1.0000000e+10')
@@ -480,20 +480,74 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
 
     ax = plt.subplot(111)
     
+    lwid= 0.15
 
     inter=interp1d(t_2[:,0],t_2[:,1])
     t_2norm = inter(12230)
-    ax.plot(t_2[:,0],t_2[:,1]/inter(12230),'r', linewidth = 0.25, label = 'MarS Model')
-    inter=interp1d(t_3[:,0],t_3[:,1])
-    ax.plot(t_3[:,0],t_3[:,1]/inter(12230),'g', linewidth = 0.25, label = 'GirS Model')
-    inter=interp1d(t_4[:,0],t_4[:,1])
-    ax.plot(t_4[:,0],t_4[:,1]/inter(12230),'m', linewidth = 0.25, label = 'BaSS Model')
-    inter=interp1d(t[:,0],t[:,1])
-    tnorm = inter(12230)
-    ax.plot(t[:,0],t[:,1]/inter(12230),'b', linewidth = 0.25, label = 'Our Model')
-    ax.legend()
-    print()
+    ax.plot(t_2[:,0],t_2[:,1]/inter(12230),'r', linewidth = lwid, label = 'MarS Model')
+    er1 = t_2[:,1]/inter(12230)
 
+    inter = interp1d(t_3[:,0],t_3[:,1])
+    ax.plot(t_3[:,0],t_3[:,1]/inter(12230),'g', linewidth = lwid, label = 'GirS Model')
+    er2 = t_3[:,1]/inter(12230)
+
+    inter = interp1d(t_4[:,0],t_4[:,1])
+    ax.plot(t_4[:,0],t_4[:,1]/inter(12230),'m', linewidth = lwid, label = 'BaSS Model')
+    er3 = t_4[:,1]/inter(12230)
+
+    inter = interp1d(t[:,0],t[:,1])
+    ax.plot(t[:,0],t[:,1]/inter(12230),'k', linewidth = lwid, label = 'Our Model')
+    
+    #avg = (er1 + er2 + er3)/3 
+    #  # Average of all other models 
+    #avg_er = abs(t[:,1]/inter(12230) - avg)
+    #  # Difference between our model and the average
+    #ax.fill_between(t[:,0], t[:,1]/inter(12230) + avg_er, t[:,1]/inter(12230) - avg_er,
+    #               facecolor = 'c', alpha = 0.5, label = 'Average comparative error (BaSS/GirS/MarS)')
+    #  # Filled-colour relative errors (assumes the same error in both vertical directions and no error in horizontal directions 
+
+
+    #max_err = np.amax([abs(np.subtract(er1, t[:,1]/inter(12230))), 
+    #                   abs(np.subtract(er2, t[:,1]/inter(12230))), 
+    #                   abs(np.subtract(er3, t[:,1]/inter(12230)))], axis = 0)
+    #max_err[max_err < 0] = 0
+
+    #min_err = np.amin([np.subtract(er1, t[:,1]/inter(12230)), 
+    #                   np.subtract(er2, t[:,1]/inter(12230)), 
+    #                   np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
+    #min_err[min_err > 0] = 0
+      # Finding the upper difference limit for our data compared to other models (switch the < and > to the opposite opperator to find the lower difference limits).
+   
+    #ax.fill_between(t[:,0], t[:,1]/inter(12230) + max_err, t[:,1]/inter(12230),
+                   # facecolor = 'c', alpha = 0.35, label = 'Maximum difference (BaSS/GirS/MarS)')
+    #ax.fill_between(t[:,0], t[:,1]/inter(12230), t[:,1]/inter(12230) + min_err,
+    #                facecolor = 'c', alpha = 0.35)
+
+    #max_err = np.amax([np.subtract(er1, t[:,1]/inter(12230)), 
+    #                   np.subtract(er2, t[:,1]/inter(12230)), 
+    #                   np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
+    #max_err[max_err > 0] = 0
+
+    #min_err = np.amin([np.subtract(er1, t[:,1]/inter(12230)), 
+     #                  np.subtract(er2, t[:,1]/inter(12230)), 
+      #                 np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
+    #min_err[min_err < 0] = 0
+      # Finding the upper difference limit for our data compared to other models (switch the < and > to the opposite opperator to find the lower difference limits).
+   
+    #ax.fill_between(t[:,0], t[:,1]/inter(12230) + max_err, t[:,1]/inter(12230),
+     #              facecolor = 'r', alpha = 0.35, label = 'Minimum difference (BaSS/GirS/MarS)')
+    #ax.fill_between(t[:,0], t[:,1]/inter(12230), t[:,1]/inter(12230) + min_err,
+     #              facecolor = 'r', alpha = 0.35)
+
+    #ax2 =  plt.subplot(111)
+    #ax2.plot(t[:,0][max_err!=0], max_err[max_err!=0] ,'k', linewidth = lwid)
+    #plt.xlabel(r'$\lambda (\AA)$', fontsize = font)
+    #plt.ylabel(r'$\Delta F/F_{12230}$', fontsize = font)
+    #	# A basic line plot for just errors, to be fitted below the standard plots
+
+    ax.legend(fontsize = font)
+    ax.tick_params(axis='both', labelsize = font)
+    print()
     plt.show(block=True)
 
     
