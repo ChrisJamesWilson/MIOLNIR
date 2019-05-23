@@ -22,6 +22,8 @@ import retrieve_irtf as ret
 from scipy.interpolate import interp1d
 from pyphot.phot import Filter
 import pyphot
+from scipy import ndimage
+from scipy.interpolate import spline
 
 print('------ FUNCTION SSP.MODEL ------')
 print('--------------------------------')
@@ -464,7 +466,7 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
 #    for i in range(len(t)):
 #        t1[i] = t[i][0]
 #        t2[i] = t[i][1]
-plt.figure()
+    plt.figure()
     font = 16
 #    plt.yscale('log')
     plt.xlabel(r'$\lambda (\AA)$', fontsize = font)
@@ -484,19 +486,19 @@ plt.figure()
 
     inter=interp1d(t_2[:,0],t_2[:,1])
     t_2norm = inter(12230)
-    ax.plot(t_2[:,0],t_2[:,1]/inter(12230),'r', linewidth = lwid, label = 'MarS Model')
+    #ax.plot(t_2[:,0],t_2[:,1]/inter(12230),'r', linewidth = lwid, label = 'MarS Model')
     er1 = t_2[:,1]/inter(12230)
 
     inter = interp1d(t_3[:,0],t_3[:,1])
-    ax.plot(t_3[:,0],t_3[:,1]/inter(12230),'g', linewidth = lwid, label = 'GirS Model')
+    #ax.plot(t_3[:,0],t_3[:,1]/inter(12230),'g', linewidth = lwid, label = 'GirS Model')
     er2 = t_3[:,1]/inter(12230)
 
     inter = interp1d(t_4[:,0],t_4[:,1])
-    ax.plot(t_4[:,0],t_4[:,1]/inter(12230),'m', linewidth = lwid, label = 'BaSS Model')
+    #ax.plot(t_4[:,0],t_4[:,1]/inter(12230),'m', linewidth = lwid, label = 'BaSS Model')
     er3 = t_4[:,1]/inter(12230)
 
     inter = interp1d(t[:,0],t[:,1])
-    ax.plot(t[:,0],t[:,1]/inter(12230),'k', linewidth = lwid, label = 'Our Model')
+    #ax.plot(t[:,0],t[:,1]/inter(12230),'k', linewidth = lwid, label = 'Our Model')
     
     #avg = (er1 + er2 + er3)/3 
     #  # Average of all other models 
@@ -507,10 +509,11 @@ plt.figure()
     #  # Filled-colour relative errors (assumes the same error in both vertical directions and no error in horizontal directions 
 
 
-    #max_err = np.amax([abs(np.subtract(er1, t[:,1]/inter(12230))), 
-    #                   abs(np.subtract(er2, t[:,1]/inter(12230))), 
-    #                   abs(np.subtract(er3, t[:,1]/inter(12230)))], axis = 0)
-    #max_err[max_err < 0] = 0
+    max_err = np.amax([abs(np.subtract(er1, t[:,1]/inter(12230))), 
+                       abs(np.subtract(er2, t[:,1]/inter(12230))), 
+                       abs(np.subtract(er3, t[:,1]/inter(12230)))], axis = 0)
+    max_err[max_err < 0] = 0
+      #Use with abs to obtain the absolute differences in the thin differences plot. Otherwise, remove abs to obtain the filled in differences plots. 
 
     #min_err = np.amin([np.subtract(er1, t[:,1]/inter(12230)), 
     #                   np.subtract(er2, t[:,1]/inter(12230)), 
@@ -540,10 +543,13 @@ plt.figure()
      #              facecolor = 'r', alpha = 0.35)
 
     #ax2 =  plt.subplot(111)
-    #ax2.plot(t[:,0][max_err!=0], max_err[max_err!=0] ,'k', linewidth = lwid)
+    #gauss = ndimage.gaussian_filter(max_err[(max_err!=0) & (max_err<0.08)], sigma = 1)
+        # Applies a basic Gaussian filter of sigma=1 to the errors, to aliken them to our dateset from Meneses-Goyita 2015. 
+        # Also attempts to ignore the telluric line region
+    #ax2.plot(t[:,0][(max_err!=0) & (max_err<0.08)], gauss ,'k', linewidth = lwid)
     #plt.xlabel(r'$\lambda (\AA)$', fontsize = font)
     #plt.ylabel(r'$\Delta F/F_{12230}$', fontsize = font)
-    #	# A basic line plot for just errors, to be fitted below the standard plots
+    	# A basic line plot for just errors, to be fitted below the standard plots
 
     ax.legend(fontsize = font)
     ax.tick_params(axis='both', labelsize = font)
@@ -657,4 +663,3 @@ def set_ssp_filename(feh, afe, age, imf, slope, CFe = 0.0, CFe_rgb = None, NFe =
         temp_s[12] + str(CN_rgb) + '_age' + age_s + '_' + imf
     
     return(file_ssp)
-
