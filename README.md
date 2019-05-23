@@ -9,6 +9,25 @@ test.py sets inital values for all the variables. It then runs the following pro
 
 :shipit:
 
+## Installation
+
+To install Pyphot must first be installed:
+
+```unix
+pip install git+https://github.com/mfouesneau/pyphot
+```
+
+Any troubles see http://mfouesneau.github.io/docs/pyphot/.
+
+Next just clone this repository
+```unix
+git clone https://github.com/ChrisJamesWilson/python_ssp
+```
+and then run test.py while within the folder python_ssp to test installation
+```unix
+python3 test.py
+```
+
 The contained codes and their functions:
 
 ## stpars.py
