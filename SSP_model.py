@@ -482,23 +482,34 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
 
     ax = plt.subplot(111)
     
-    lwid= 0.15
+    lwid= 0.3
 
     inter=interp1d(t_2[:,0],t_2[:,1])
     t_2norm = inter(12230)
-    #ax.plot(t_2[:,0],t_2[:,1]/inter(12230),'r', linewidth = lwid, label = 'MarS Model')
+    t_2[(18050-9350)+150:(18800-9350)+150, 1] = np.nan
+    ax.plot(t_2[:,0],t_2[:,1]/inter(12230),'r', linewidth = lwid, label = 'MarS Model')
     er1 = t_2[:,1]/inter(12230)
 
     inter = interp1d(t_3[:,0],t_3[:,1])
-    #ax.plot(t_3[:,0],t_3[:,1]/inter(12230),'g', linewidth = lwid, label = 'GirS Model')
+    t_3[(18050-9350)+150:(18800-9350)+150, 1] = np.nan
+    ax.plot(t_3[:,0],t_3[:,1]/inter(12230),'g', linewidth = lwid, label = 'GirS Model')
     er2 = t_3[:,1]/inter(12230)
 
     inter = interp1d(t_4[:,0],t_4[:,1])
-    #ax.plot(t_4[:,0],t_4[:,1]/inter(12230),'m', linewidth = lwid, label = 'BaSS Model')
+    t_4[(18050-9350)+150:(18800-9350)+150, 1] = np.nan
+    ax.plot(t_4[:,0],t_4[:,1]/inter(12230),'c', linewidth = lwid, label = 'BaSS Model')
     er3 = t_4[:,1]/inter(12230)
 
     inter = interp1d(t[:,0],t[:,1])
-    #ax.plot(t[:,0],t[:,1]/inter(12230),'k', linewidth = lwid, label = 'Our Model')
+    t[(18050-9350)+150:(18800-9350)+150, 1] = np.nan
+      # Removal of telluric lines from plots and calculations
+    ax.plot(t[:,0],t[:,1]/inter(12230),'b', linewidth = lwid, label = 'Our Model')
+  
+
+#####################################
+### Other plots (error analysis) ####
+#####################################
+
     
     #avg = (er1 + er2 + er3)/3 
     #  # Average of all other models 
@@ -506,23 +517,23 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
     #  # Difference between our model and the average
     #ax.fill_between(t[:,0], t[:,1]/inter(12230) + avg_er, t[:,1]/inter(12230) - avg_er,
     #               facecolor = 'c', alpha = 0.5, label = 'Average comparative error (BaSS/GirS/MarS)')
-    #  # Filled-colour relative errors (assumes the same error in both vertical directions and no error in horizontal directions 
+    # # Filled-colour relative errors (assumes the same error in both vertical directions and no error in horizontal directions 
 
 
-    max_err = np.amax([abs(np.subtract(er1, t[:,1]/inter(12230))), 
-                       abs(np.subtract(er2, t[:,1]/inter(12230))), 
-                       abs(np.subtract(er3, t[:,1]/inter(12230)))], axis = 0)
-    max_err[max_err < 0] = 0
-      #Use with abs to obtain the absolute differences in the thin differences plot. Otherwise, remove abs to obtain the filled in differences plots. 
+    #max_err = np.amax([np.subtract(er1, t[:,1]/inter(12230)), 
+    #                   np.subtract(er2, t[:,1]/inter(12230)), 
+    #                   np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
+    #max_err[max_err < 0] = 0
+    #  #Use with abs to obtain the absolute differences in the thin differences plot. Otherwise, remove abs to obtain the filled in differences plots. 
 
     #min_err = np.amin([np.subtract(er1, t[:,1]/inter(12230)), 
     #                   np.subtract(er2, t[:,1]/inter(12230)), 
     #                   np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
     #min_err[min_err > 0] = 0
-      # Finding the upper difference limit for our data compared to other models (switch the < and > to the opposite opperator to find the lower difference limits).
+    #  # Finding the upper difference limit for our data compared to other models (switch the < and > to the opposite opperator to find the lower difference limits).
    
     #ax.fill_between(t[:,0], t[:,1]/inter(12230) + max_err, t[:,1]/inter(12230),
-                   # facecolor = 'c', alpha = 0.35, label = 'Maximum difference (BaSS/GirS/MarS)')
+    #                facecolor = 'c', alpha = 0.35, label = 'Maximum difference (BaSS/GirS/MarS)')
     #ax.fill_between(t[:,0], t[:,1]/inter(12230), t[:,1]/inter(12230) + min_err,
     #                facecolor = 'c', alpha = 0.35)
 
@@ -532,24 +543,26 @@ def ssp_model(Z, feh = None, afe = None, age = None, imf = None, slope = None,
     #max_err[max_err > 0] = 0
 
     #min_err = np.amin([np.subtract(er1, t[:,1]/inter(12230)), 
-     #                  np.subtract(er2, t[:,1]/inter(12230)), 
-      #                 np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
+    #                   np.subtract(er2, t[:,1]/inter(12230)), 
+    #                   np.subtract(er3, t[:,1]/inter(12230))], axis = 0)
     #min_err[min_err < 0] = 0
-      # Finding the upper difference limit for our data compared to other models (switch the < and > to the opposite opperator to find the lower difference limits).
+    #  # Finding the upper difference limit for our data compared to other models (switch the < and > to the opposite opperator to find the lower difference limits).
    
     #ax.fill_between(t[:,0], t[:,1]/inter(12230) + max_err, t[:,1]/inter(12230),
-     #              facecolor = 'r', alpha = 0.35, label = 'Minimum difference (BaSS/GirS/MarS)')
+    #               facecolor = 'r', alpha = 0.35, label = 'Minimum difference (BaSS/GirS/MarS)')
     #ax.fill_between(t[:,0], t[:,1]/inter(12230), t[:,1]/inter(12230) + min_err,
-     #              facecolor = 'r', alpha = 0.35)
+    #               facecolor = 'r', alpha = 0.35)
 
     #ax2 =  plt.subplot(111)
-    #gauss = ndimage.gaussian_filter(max_err[(max_err!=0) & (max_err<0.08)], sigma = 1)
-        # Applies a basic Gaussian filter of sigma=1 to the errors, to aliken them to our dateset from Meneses-Goyita 2015. 
-        # Also attempts to ignore the telluric line region
-    #ax2.plot(t[:,0][(max_err!=0) & (max_err<0.08)], gauss ,'k', linewidth = lwid)
+    #max_err[(18050-9350)+150:(18800-9350)+150] = np.nan
+    #    # Position of telluric gap
+    #gauss = ndimage.gaussian_filter(max_err[max_err!=np.nan], sigma = 1)
+    #    # Applies a basic Gaussian filter of sigma=1 to the errors, to aliken them to our dateset from Meneses-Goyita 2015. 
+    #    # Also attempts to ignore the telluric line region
+    #ax2.plot(t[:,0][max_err!=np.nan], gauss, 'k', linewidth = lwid)
     #plt.xlabel(r'$\lambda (\AA)$', fontsize = font)
     #plt.ylabel(r'$\Delta F/F_{12230}$', fontsize = font)
-    	# A basic line plot for just errors, to be fitted below the standard plots
+    # 	# A basic line plot for just errors, to be fitted below the standard plots
 
     ax.legend(fontsize = font)
     ax.tick_params(axis='both', labelsize = font)
