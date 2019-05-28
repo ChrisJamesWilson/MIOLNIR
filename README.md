@@ -1,4 +1,4 @@
-# python_ssp
+# MIOLNIR: Modelling and Interpolation of Observed Luminosities in the Near Infra Red
 WIP. Run test.py to get an SSP
 
 
