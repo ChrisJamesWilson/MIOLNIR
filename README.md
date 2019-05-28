@@ -24,7 +24,7 @@ Any troubles see http://mfouesneau.github.io/docs/pyphot/.
 
 Next just clone this repository
 ```unix
-git clone https://github.com/ChrisJamesWilson/python_ssp
+git clone https://github.com/ChrisJamesWilson/MIOLNIR
 ```
 and then run test.py while within the folder python_ssp to test installation
 ```unix
