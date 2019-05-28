@@ -1,11 +1,14 @@
-# MIOLNIR: Modelling and Interpolation of Observed Luminosities in the Near Infra Red
-WIP. Run test.py to get an SSP
+# MIOLNIR: Modelling and Interpolation across Observed Luminosities in the Near Infra Red
+MIOLNIR utilises an interpolation method that has stringent limitations on its choice of stars. In other words, they must be worthy.
 
+
+WIP. Run test.py to get an SSP
 
 test.py sets inital values for all the variables. It then runs the following programs:
   - stpars - This code calculates the Teff, logg and Z components of several stars along an isochrone. Currently, the only isochrone in use is Padova age 10Gyr
   - interpall - This creates interpolated spectra for all the stars contained in the stpars output file
   - SSP_model - This combines all the spectra together to create an SSP.
+  
 
 :shipit:
 
